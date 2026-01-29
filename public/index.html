@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verificar conexión SQL Server</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1>Comprobador de conexión a SQL Server</h1>
+        <p>
+          Esta aplicación se despliega como una sola instancia en su servidor Nginx.
+          Ajusta o utiliza los valores precargados para probar la vista segura.
+        </p>
+      </header>
+
+      <form id="connection-form">
+        <label>
+          IP / Servidor
+          <input name="serverHost" value="13.77.103.149" />
+        </label>
+
+        <label>
+          Puerto
+          <input name="serverPort" value="1441" />
+        </label>
+
+        <label>
+          Usuario
+          <input name="user" value="saiya" />
+        </label>
+
+        <label>
+          Base de datos
+          <input name="database" value="AL_TOSatelite_rep" />
+        </label>
+
+        <label>
+          Vista / Consulta mínima
+          <input name="viewName" value="[saiya].[refacciones]" />
+        </label>
+
+        <label>
+          Contraseña
+          <input name="password" type="password" placeholder="Tu contraseña reservada" />
+        </label>
+
+        <button type="submit">Probar conexión</button>
+      </form>
+
+      <section id="result">
+        <p>Haz clic en el botón para validar la conexión a la vista.</p>
+      </section>
+    </main>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
