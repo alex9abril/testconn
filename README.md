@@ -1,6 +1,6 @@
 # Interfaz única para probar conexión SQL Server
 
-Esta pequeña aplicación combina el front y el backend para que puedas desplegar **una sola aplicación** en tu servidor Nginx y validar si puedes consultar la vista `[saiya].[refacciones]`.
+Esta pequeña aplicación combina el front y el backend para que puedas desplegar **una sola aplicación** en tu servidor Nginx y validar si puedes consultar `[saiya].[refacciones]` con la IP que sólo tiene autorizado el firewall.
 
 ## Cómo usarla
 
@@ -16,16 +16,17 @@ Esta pequeña aplicación combina el front y el backend para que puedas desplega
    ```bash
    npm start
    ```
-4. Configura tu bloque de servidor Nginx para que haga proxy reverso hacia `http://localhost:3000` (o el `PORT` que pongas) y así exponer solo esta app.
+   También puedes sobrescribir `PORT` si necesitas un puerto distinto:
+   ```bash
+   PORT=4200 npm start
+   ```
+4. Configura tu bloque de Nginx para hacer proxy reverso hacia `http://localhost:3100` (u otra dirección si cambias `PORT`).
 
 ## Qué hace
 
-- El front muestra un formulario precargado con:
-  - IP `13.77.103.149`
-  - Puerto `1441`
-  - Usuario `saiya`
-  - Base `AL_TOSatelite_rep`
-  - Vista `select * from [saiya].[refacciones]`
-- El backend (Express + `mssql`) recibe los datos, usa la contraseña que escribas o esté en `DB_PASSWORD`, ejecuta la vista y responde si la consulta devolvió filas.
+- El frontend divide el formulario en:
+  - un panel **Consulta** donde pegas la línea completa de SQL que quieres ejecutar (por defecto: `SELECT TOP (10) * FROM [saiya].[refacciones];`).
+  - un panel **Conexión** con los datos precargados (IP `13.77.103.149`, puerto `1441`, usuario `saiya`, base `AL_TOSatelite_rep`) más tu contraseña secreta.
+- El backend (Express + `mssql`) recibe la configuración, usa la contraseña del formulario o `DB_PASSWORD`, ejecuta tu consulta y responde con el número de filas, una muestra y cualquier error que ocurra.
 
-Si la conexión y la vista responden correctamente, verás el resultado y un mensaje de éxito; si no, el error ayuda a diagnosticarlo.
+Si la conexión responde correctamente verás el estado y la muestra; si no, los detalles ayudan a diagnosticar el problema desde el lado del servidor SQL o la red autorizada.

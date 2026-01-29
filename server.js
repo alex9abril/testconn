@@ -16,7 +16,7 @@ const DEFAULT_CONFIG = {
   serverPort: 1441,
   database: "AL_TOSatelite_rep",
   user: "saiya",
-  viewName: "[saiya].[refacciones]",
+  queryText: "SELECT TOP (10) * FROM [saiya].[refacciones];",
 };
 
 app.post("/api/test-connection", async (req, res) => {
@@ -26,7 +26,7 @@ app.post("/api/test-connection", async (req, res) => {
     database,
     user,
     password = process.env.DB_PASSWORD,
-    viewName,
+    queryText,
   } = { ...DEFAULT_CONFIG, ...req.body };
 
   if (!password) {
@@ -54,7 +54,10 @@ app.post("/api/test-connection", async (req, res) => {
   try {
     const pool = await mssql.connect(config);
     const request = pool.request();
-    const query = `SELECT TOP (10) * FROM ${viewName}`;
+    const query = queryText.trim();
+    if (!query) {
+      throw new Error("La consulta SQL no puede estar vacía.");
+    }
     const result = await request.query(query);
     await pool.close();
 

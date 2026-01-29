@@ -9,49 +9,61 @@
   <body>
     <main class="container">
       <header>
-        <h1>Comprobador de conexión a SQL Server</h1>
+        <h1>Consulta y respuesta SQL</h1>
         <p>
-          Esta aplicación se despliega como una sola instancia en su servidor Nginx.
-          Ajusta o utiliza los valores precargados para probar la vista segura.
+          Despliega un solo servicio en tu servidor Nginx, especifica la consulta completa
+          y valida que el servidor SQL responda desde la red autorizada.
         </p>
       </header>
 
       <form id="connection-form">
-        <label>
-          IP / Servidor
-          <input name="serverHost" value="13.77.103.149" />
-        </label>
+        <div class="form-grid">
+          <section class="panel">
+            <h2>Consulta</h2>
+            <label>
+              Línea de comandos SQL
+              <textarea
+                name="queryText"
+                rows="6"
+              >SELECT TOP (10) * FROM [saiya].[refacciones];</textarea>
+            </label>
+          </section>
 
-        <label>
-          Puerto
-          <input name="serverPort" value="1441" />
-        </label>
+          <section class="panel">
+            <h2>Conexión</h2>
+            <label>
+              IP / Servidor
+              <input name="serverHost" value="13.77.103.149" />
+            </label>
 
-        <label>
-          Usuario
-          <input name="user" value="saiya" />
-        </label>
+            <label>
+              Puerto
+              <input name="serverPort" value="1441" />
+            </label>
 
-        <label>
-          Base de datos
-          <input name="database" value="AL_TOSatelite_rep" />
-        </label>
+            <label>
+              Usuario
+              <input name="user" value="saiya" />
+            </label>
 
-        <label>
-          Vista / Consulta mínima
-          <input name="viewName" value="[saiya].[refacciones]" />
-        </label>
+            <label>
+              Base de datos
+              <input name="database" value="AL_TOSatelite_rep" />
+            </label>
 
-        <label>
-          Contraseña
-          <input name="password" type="password" placeholder="Tu contraseña reservada" />
-        </label>
+            <label>
+              Contraseña
+              <input name="password" type="password" placeholder="Tu contraseña reservada" />
+            </label>
+          </section>
+        </div>
 
         <button type="submit">Probar conexión</button>
       </form>
 
-      <section id="result">
-        <p>Haz clic en el botón para validar la conexión a la vista.</p>
+      <section id="result" class="panel response-panel">
+        <h2>Respuesta</h2>
+        <p>En espera de tu consulta.</p>
       </section>
     </main>
 
