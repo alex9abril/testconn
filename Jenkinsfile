@@ -5,11 +5,8 @@ pipeline {
     PROJECT_NAME = 'testconn'
     ENVIRONMENT  = 'dev'
     PORT         = '3001'
-
     DEPLOY_PATH  = "/var/www/html/${PROJECT_NAME}/${ENVIRONMENT}"
     LOGS_PATH    = "/var/log/${PROJECT_NAME}/${ENVIRONMENT}"
-    SUDO         = 'sudo -n'
-
     NODE_ENV     = 'production'
   }
 
@@ -43,7 +40,6 @@ pipeline {
         sh '''
           echo "📦 Empaquetando artifact..."
           rm -f artifact.tgz
-          # Incluye lo necesario para correr
           tar -czf artifact.tgz \
             server.js package.json package-lock.json \
             public
@@ -52,66 +48,50 @@ pipeline {
       }
     }
 
-    stage('Deploy to server folders') {
+    stage('Deploy (no sudo)') {
       steps {
         sh """
           set -e
 
-          echo "📁 Asegurando directorios destino..."
-          ${SUDO} mkdir -p ${DEPLOY_PATH} ${LOGS_PATH}
+          echo "📁 Verificando rutas destino..."
+          test -d "${DEPLOY_PATH}" || { echo "❌ No existe DEPLOY_PATH: ${DEPLOY_PATH}"; exit 1; }
+          test -d "${LOGS_PATH}"   || { echo "❌ No existe LOGS_PATH: ${LOGS_PATH}"; exit 1; }
 
-          echo "🔧 Ownership (jenkins:jenkins) para poder escribir/rsync..."
-          ${SUDO} chown -R jenkins:jenkins ${DEPLOY_PATH} ${LOGS_PATH} || true
-          ${SUDO} chmod -R 755 ${DEPLOY_PATH} || true
-          ${SUDO} chmod 775 ${LOGS_PATH} || true
+          echo "🧹 Limpiando deploy path..."
+          rm -rf ${DEPLOY_PATH}/*
 
           echo "🚚 Desempaquetando artifact en ${DEPLOY_PATH}..."
-          rm -rf ${DEPLOY_PATH}/*
           tar -xzf artifact.tgz -C ${DEPLOY_PATH}
 
           echo "📦 Instalando dependencias en destino (prod)..."
           cd ${DEPLOY_PATH}
           npm ci --omit=dev
 
-          echo "🧾 Asegurando PORT=3001 en entorno del proceso"
-          # Si usas .env, lo creamos/actualizamos sin guardar secretos aquí.
-          # (DB_PASSWORD lo puedes manejar por Jenkins credentials o por env del servicio)
+          echo "🧾 Asegurando PORT=${PORT} en .env (sin secretos)..."
           if [ -f ".env" ]; then
-            # actualizar o añadir PORT
             grep -q '^PORT=' .env && sed -i 's/^PORT=.*/PORT=${PORT}/' .env || echo "PORT=${PORT}" >> .env
           else
             echo "PORT=${PORT}" > .env
           fi
 
-          echo "✅ Deploy listo en ${DEPLOY_PATH}"
-          echo "📋 Contenido:"
+          echo "✅ Deploy listo. Listado:"
           ls -la ${DEPLOY_PATH}
         """
       }
     }
 
-    stage('Restart service (if exists) + Healthcheck') {
+    stage('Healthcheck (si ya está corriendo)') {
       steps {
         sh """
           set +e
-          SERVICE_NAME="${PROJECT_NAME}-${ENVIRONMENT}"
-
-          echo "🔄 Intentando reiniciar servicio systemd: \${SERVICE_NAME} (si existe)..."
-          ${SUDO} systemctl restart \${SERVICE_NAME} 2>/dev/null
-          if [ \$? -ne 0 ]; then
-            echo "ℹ️ No existe/No se pudo reiniciar \${SERVICE_NAME}. (No es fallo del deploy)"
-          else
-            echo "✅ Servicio reiniciado"
-          fi
-
-          echo "⏳ Esperando 2s..."
-          sleep 2
-
           echo "🩺 Healthcheck: http://127.0.0.1:${PORT}/health"
-          curl -sf http://127.0.0.1:${PORT}/health && echo "" || {
-            echo "⚠️ Healthcheck no respondió. (Si aún no está corriendo el servicio es normal)"
+          curl -sf http://127.0.0.1:${PORT}/health
+          if [ \$? -ne 0 ]; then
+            echo "ℹ️ No respondió el healthcheck. (Aún no hay servicio arrancado/reiniciado)"
             exit 0
-          }
+          fi
+          echo ""
+          echo "✅ Healthcheck OK"
         """
       }
     }
