@@ -1,7 +1,7 @@
 const form = document.querySelector("#connection-form");
 const resultSection = document.querySelector("#result");
 
-const renderResult = ({ success, message, rows, sample, details }) => {
+const renderResult = ({ success, message, rows, rowsData, details }) => {
   const statusClass = success ? "success" : "error";
   resultSection.innerHTML = `
     <h2>Respuesta</h2>
@@ -9,11 +9,7 @@ const renderResult = ({ success, message, rows, sample, details }) => {
       <p>${message}</p>
       ${success && rows !== undefined ? `<p>${rows} fila(s) disponibles.</p>` : ""}
       ${details ? `<p>${details}</p>` : ""}
-      ${
-        sample && sample.length
-          ? `<pre class="data-sample">${JSON.stringify(sample, null, 2)}</pre>`
-          : ""
-      }
+      ${rowsData && rowsData.length ? buildTable(rowsData) : "<p>No hay filas para mostrar.</p>"}
     </div>
   `;
 };
@@ -55,3 +51,37 @@ form.addEventListener("submit", async (event) => {
     button.textContent = "Probar conexión";
   }
 });
+
+const escapeHtml = (value) => {
+  if (value === null || value === undefined) return "";
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+};
+
+const buildTable = (rows) => {
+  const headers = Object.keys(rows[0] ?? {});
+  if (!headers.length) {
+    return "<p>No hay columnas para mostrar.</p>";
+  }
+
+  const headerRow = headers.map((header) => `<th>${header}</th>`).join("");
+  const bodyRows = rows
+    .map(
+      (row) =>
+        `<tr>${headers
+          .map((header) => `<td>${escapeHtml(row[header])}</td>`)
+          .join("")}</tr>`
+    )
+    .join("");
+
+  return `
+    <div class="table-wrapper">
+      <table>
+        <thead><tr>${headerRow}</tr></thead>
+        <tbody>${bodyRows}</tbody>
+      </table>
+    </div>
+  `;
+};

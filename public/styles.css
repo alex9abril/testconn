@@ -146,3 +146,30 @@ button:active {
   font-size: 0.85rem;
   color: #cbd5f5;
 }
+
+.table-wrapper {
+  margin-top: 1rem;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+th,
+td {
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  padding: 0.55rem 0.65rem;
+  text-align: left;
+}
+
+th {
+  background: #0b1120;
+  font-weight: 600;
+}
+
+tbody tr:nth-child(even) {
+  background: rgba(148, 163, 184, 0.05);
+}

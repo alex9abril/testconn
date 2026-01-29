@@ -65,7 +65,7 @@ app.post("/api/test-connection", async (req, res) => {
       success: true,
       message: "Conexión exitosa y resultados obtenidos.",
       rows: result.recordset.length,
-      sample: result.recordset.slice(0, 3),
+      rowsData: result.recordset,
     });
   } catch (error) {
     mssql.close();
