@@ -3,70 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Verificar conexión SQL Server</title>
+    <title>Agora Data Bridge - Sistema de integración</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="container">
-      <header>
-        <h1>Consulta y respuesta SQL</h1>
-        <p>
-          Despliega un solo servicio en tu servidor Nginx, especifica la consulta completa
-          y valida que el servidor SQL responda desde la red autorizada.
-        </p>
-      </header>
-
-      <form id="connection-form">
-        <div class="form-grid">
-          <section class="panel">
-            <h2>Consulta</h2>
-            <label>
-              Línea de comandos SQL
-              <textarea
-                name="queryText"
-                rows="6"
-              >SELECT TOP (10) * FROM [saiya].[refacciones];</textarea>
-            </label>
-          </section>
-
-          <section class="panel">
-            <h2>Conexión</h2>
-            <label>
-              IP / Servidor
-              <input name="serverHost" value="13.77.103.149" />
-            </label>
-
-            <label>
-              Puerto
-              <input name="serverPort" value="1441" />
-            </label>
-
-            <label>
-              Usuario
-              <input name="user" value="saiya" />
-            </label>
-
-            <label>
-              Base de datos
-              <input name="database" value="AL_TOSatelite_rep" />
-            </label>
-
-            <label>
-              Contraseña
-              <input name="password" type="password" placeholder="Tu contraseña reservada" />
-            </label>
-          </section>
-        </div>
-
-        <button type="submit">Probar conexión</button>
-      </form>
-
-      <section id="result" class="panel response-panel">
-        <h2>Respuesta</h2>
-        <p>En espera de tu consulta.</p>
-      </section>
-    </main>
-
+    <div class="app-frame">
+      <div id="sidebar-container"></div>
+      <div class="app-main">
+        <div id="topbar-container"></div>
+        <div id="main-content" class="main-content"></div>
+      </div>
+    </div>
     <script type="module" src="app.js"></script>
   </body>
 </html>
