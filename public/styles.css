@@ -114,6 +114,39 @@ button:active {
   border-radius: 1rem;
 }
 
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.result-header h2 {
+  margin: 0;
+}
+
+.export-button {
+  background: linear-gradient(135deg, #38bdf8, #6366f1);
+  color: #0f172a;
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.65rem 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-size: 0.9rem;
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+}
+
+.export-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 40px rgba(99, 102, 241, 0.5);
+}
+
+.export-button:active {
+  transform: scale(0.98);
+}
+
 .response-panel {
   padding-bottom: 1.5rem;
 }
